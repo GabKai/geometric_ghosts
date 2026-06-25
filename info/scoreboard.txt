@@ -1,0 +1,3 @@
+Player_1 1500
+Kaizer 1200
+Ghost 800
