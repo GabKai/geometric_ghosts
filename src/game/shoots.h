@@ -10,7 +10,8 @@
 typedef enum {
     MOVE_LINEAR,
     MOVE_CIRCLE,
-    MOVE_SINE
+    MOVE_SINE,
+    MOVE_SPLASH
 } MoveType;
 
 typedef struct {

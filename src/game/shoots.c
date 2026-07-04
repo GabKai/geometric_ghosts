@@ -13,6 +13,7 @@ static MoveType ParseMoveType(const char *typeStr) {
     if (strcmp(typeStr, "circle") == 0) return MOVE_CIRCLE;
     if (strcmp(typeStr, "linear") == 0) return MOVE_LINEAR;
     if (strcmp(typeStr, "sine") == 0) return MOVE_SINE;
+    if (strcmp(typeStr, "splash") == 0) return MOVE_SPLASH;
     return MOVE_LINEAR;
 }
 
@@ -91,6 +92,15 @@ void SpawnShoot(const char *name, Vector2 origin, Vector2 target, ShooterInfo sh
     g->direction = (len > 0) ? (Vector2){ dx/len, dy/len } : (Vector2){ 1, 0 };
     
     int count = g->config.count;
+    switch (g->config.moveType)
+    {
+    case MOVE_SPLASH:
+        count += (int) g->aux2;
+        break;    
+    default:
+        break;
+    }
+
     if (count > MAX_PROJECTILES_PER_GROUP) count = MAX_PROJECTILES_PER_GROUP;
 
     for (int i = 0; i < count; i++) {
@@ -106,6 +116,14 @@ void SpawnShoot(const char *name, Vector2 origin, Vector2 target, ShooterInfo sh
                 break;
             case MOVE_SINE:
                 g->projectiles[i].offset = i * PI;
+                break;
+            case MOVE_SPLASH:
+                float baseAngle = atan2f(g->direction.y, g->direction.x);
+
+                float randomPercent = (float)GetRandomValue(0, 100) / 100.0f; 
+                float angleOffset = -g->aux1 + randomPercent * (2.0f * g->aux1);
+
+                g->projectiles[i].offset = baseAngle + angleOffset;
                 break;
             default:
                 break;
@@ -137,6 +155,7 @@ void UpdateShoots(void) {
 
             switch(g->config.moveType){
                 case MOVE_LINEAR:
+                    g->projectiles[p].offset = g->projectiles[p].offset + g->aux2 * g->currentTime * (p + 1);
                     g->projectiles[p].localPosition.x = g->refPosition.x + (g->direction.x * g->projectiles[p].offset);
                     g->projectiles[p].localPosition.y = g->refPosition.y + (g->direction.y * g->projectiles[p].offset);
                     break;
@@ -155,6 +174,12 @@ void UpdateShoots(void) {
 
                     g->projectiles[p].localPosition.x = g->refPosition.x + (perp.x * wave);
                     g->projectiles[p].localPosition.y = g->refPosition.y + (perp.y * wave);
+                    break;
+                case MOVE_SPLASH:
+                    float angle = g->projectiles[p].offset; 
+    
+                    g->projectiles[p].localPosition.x += cosf(angle) * g->refSpeed * deltaTime;
+                    g->projectiles[p].localPosition.y += sinf(angle) * g->refSpeed * deltaTime;
                     break;
             }
         }

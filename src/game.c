@@ -271,7 +271,7 @@ void CheckProjectilesCollisions(void){
 
                 if (CheckCollisionCircles(projectilePos, shootRadius, player.position, playerRadius)) {
 
-                    PlayerDamaged(group->config.damage);
+                    PlayerDamaged(group->damage);
                     group->projectiles[p].active = false;
 
                     TraceLog(LOG_INFO, "GAME: Player foi atingido por um projetil inimigo! HP atual: %d", player.hp);

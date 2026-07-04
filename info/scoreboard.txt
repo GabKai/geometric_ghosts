@@ -1,5 +1,5 @@
+aaaa 3600
+ggg 2400
+kkkk 1800
 adada 1650
-Player_1 1500
-Kaizer 1200
-lixo 1200
-adada 1200
+gggg 1650
