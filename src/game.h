@@ -3,12 +3,15 @@
 
 #include "raylib.h"
 #include "menu.h"
-#include "states.h"
+#include "common/states.h"
+#include "game/shoots.h"
+#include "game/enemies.h"
 
 typedef struct {
     Vector2 position;
     float speed;
     Texture2D texture;
+    ShooterInfo bonus;
     char nick[11];
 } Player;
 

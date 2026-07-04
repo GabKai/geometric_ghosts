@@ -1,0 +1,29 @@
+    INIMIGO:
+nome
+raridade
+tamanho
+vida
+damage
+velocidade
+distancia minima
+cooldown
+tiro: // opcional
+nome template
+aux1 aux2 aux3 bonusSpeed bonusDamage
+death: // opcional
+nome template
+aux1 aux2 aux3 bonusSpeed bonusDamage
+;
+
+    TIRO:
+nome
+padrão de movimento
+contagem de tiros
+dano
+duração
+velocidade
+game/shoot/nome do som
+aux1
+aux2
+aux3
+;

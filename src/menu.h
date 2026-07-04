@@ -2,7 +2,8 @@
 #define MENU_H
 
 #include "raylib.h"
-#include "states.h"
+#include "common/states.h"
+#include "common/audio_manager.h"
 
 typedef struct {
     char nick[11];

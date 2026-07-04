@@ -1,12 +1,12 @@
 #include "raylib.h"
 #include "menu.h"
 #include "game.h"
-#include "states.h"
+#include "common/states.h"
 
 int main(void)
 {
-    const int screenWidth = 800;
-    const int screenHeight = 600;
+    const int screenWidth = 1500;
+    const int screenHeight = 900;
 
     InitWindow(screenWidth, screenHeight, "Geometric Ghosts");
     SetTargetFPS(60);
@@ -17,6 +17,7 @@ int main(void)
 
     bool gameInitialized = false;
 
+    InitAudioManager();
     InitMenu();
 
     while (!WindowShouldClose())
@@ -56,6 +57,7 @@ int main(void)
         EndDrawing();
     }
 
+    UnloadAudioManager();
     UnloadMenu();
     if (gameInitialized){        
         UnloadGame();

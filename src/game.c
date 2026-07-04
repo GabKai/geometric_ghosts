@@ -12,10 +12,13 @@ void InitGame(const char *playerNick) {
     strncpy(player.nick, playerNick, 10);
     player.nick[10] = '\0';
 
-    if (FileExists("assets/player/sprite_base.png")) {
-        player.texture = LoadTexture("assets/player/sprite_base.png");
+    if (FileExists("assets/sprites/player/sprite_base.png")) {
+        player.texture = LoadTexture("assets/sprites/player/sprite_base.png");
         textureLoaded = true;
     }
+
+    LoadShootTemplates();
+    LoadEnemyTemplates();
 
     camera.target = player.position;
     camera.offset = (Vector2){ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
@@ -41,6 +44,17 @@ void UpdateGame(GameState *currentState) {
     }
 
     camera.target = player.position;
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+
+        SpawnShoot("simple", player.position, mouseWorldPos, player.bonus, true);
+    }
+
+    UpdateEnemies(player.position);
+    UpdateShoots();
+
+    SpawnEnemy(player.position);
 
     if (IsKeyPressed(KEY_ESCAPE)) {
         *currentState = STATE_MENU;
@@ -68,6 +82,8 @@ void DrawGame(void) {
         for (float y = startY; y <= endY; y += gridSize) {
             DrawLineV((Vector2){ startX, y }, (Vector2){ endX, y }, DARKGRAY);
         }
+        
+        DrawEnemies();
 
         if (textureLoaded) {
             Vector2 positionOffset = { 
@@ -75,11 +91,9 @@ void DrawGame(void) {
                 player.position.y - player.texture.height / 2.0f 
             };
             DrawTextureV(player.texture, positionOffset, WHITE);
-        } else {
-            DrawCircleV(player.position, 20, PURPLE);
-            DrawCircleV((Vector2){player.position.x - 7, player.position.y - 5}, 4, WHITE); // Olho E
-            DrawCircleV((Vector2){player.position.x + 7, player.position.y - 5}, 4, WHITE); // Olho D
         }
+
+        DrawShoots();
 
     EndMode2D();
 

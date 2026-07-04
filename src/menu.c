@@ -57,6 +57,7 @@ void UpdateMenu(GameState *currentState, char *playerNick) {
     if (isNickValid && CheckCollisionPointRec(mousePos, playButton)) {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             *currentState = STATE_GAME; 
+            PlaySFX("ui/clickSelect.wav");
         }
     }
 }
