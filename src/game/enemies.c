@@ -50,7 +50,7 @@ void LoadEnemyTemplates(void) {
             }
         }
 
-        TraceLog(LOG_INFO, "ENEMIES: template carregado \n%s\n%d\n%d\n%d\n%f\n%f\n%f",t->name, t->rarity, t->maxHp, t->damage, t->speed, t->minDist, t->shootCooldown);
+        //TraceLog(LOG_INFO, "ENEMIES: template carregado \n%s\n%d\n%d\n%d\n%f\n%f\n%f",t->name, t->rarity, t->maxHp, t->damage, t->speed, t->minDist, t->shootCooldown);
 
         char fullPath[256];
         snprintf(fullPath, sizeof(fullPath), "assets/sprites/enemies/%s.png", t->name);

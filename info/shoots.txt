@@ -20,3 +20,14 @@ game/shoot/shoot.wav
 0.0
 15.0
 ;
+dna
+sine
+2
+25
+10.0
+600.0
+game/shoot/shoot.wav
+100.0
+6.28
+0.0
+;

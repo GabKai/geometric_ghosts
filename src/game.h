@@ -6,6 +6,7 @@
 #include "common/states.h"
 #include "game/shoots.h"
 #include "game/enemies.h"
+#include "game/reward.h"
 
 typedef struct {
     Texture2D texture;
@@ -23,6 +24,7 @@ typedef struct {
 void InitGame(GameData *gData);
 void UpdateGame(void);
 void DrawGame(void);
+void DrawUI(void);
 void UnloadGame(void);
 void CheckCollisions(void);
 void CheckPlayerEnemiesCollisions(void);

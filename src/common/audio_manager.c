@@ -6,10 +6,19 @@
 
 static CachedSound soundCache[MAX_CACHED_SOUNDS];
 static int cachedCount = 0;
+static float volume = 1.0f;
 
 void InitAudioManager(void) {
     InitAudioDevice(); 
     cachedCount = 0;
+    
+    FILE *fileOpts = fopen("info/options.txt", "r");
+    if (fileOpts != NULL) {
+        fscanf(fileOpts, "%f", &volume);
+        fclose(fileOpts);
+    }
+        
+    SetMasterVolume(volume);
 }
 
 void PlaySFX(const char *soundName) {

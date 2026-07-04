@@ -11,6 +11,8 @@ static ShootGroup activeGroups[MAX_ACTIVE_GROUPS];
 
 static MoveType ParseMoveType(const char *typeStr) {
     if (strcmp(typeStr, "circle") == 0) return MOVE_CIRCLE;
+    if (strcmp(typeStr, "linear") == 0) return MOVE_LINEAR;
+    if (strcmp(typeStr, "sine") == 0) return MOVE_SINE;
     return MOVE_LINEAR;
 }
 
@@ -102,6 +104,9 @@ void SpawnShoot(const char *name, Vector2 origin, Vector2 target, ShooterInfo sh
             case MOVE_CIRCLE:
                 g->projectiles[i].offset = i * (2.0f * PI / count);
                 break;
+            case MOVE_SINE:
+                g->projectiles[i].offset = i * PI;
+                break;
             default:
                 break;
         }
@@ -141,6 +146,15 @@ void UpdateShoots(void) {
                     
                     g->projectiles[p].localPosition.x = g->refPosition.x + cosf(finalAngle) * radius;
                     g->projectiles[p].localPosition.y = g->refPosition.y + sinf(finalAngle) * radius;
+                    break;
+                case MOVE_SINE:
+                    float ampli = g->aux1 + g->currentTime*g->aux3;
+                    float wave = sinf(g->currentTime * g->aux2 + g->projectiles[p].offset) * ampli;
+
+                    Vector2 perp = { -g->direction.y, g->direction.x };
+
+                    g->projectiles[p].localPosition.x = g->refPosition.x + (perp.x * wave);
+                    g->projectiles[p].localPosition.y = g->refPosition.y + (perp.y * wave);
                     break;
             }
         }

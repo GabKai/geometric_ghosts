@@ -1,32 +1,21 @@
 #include "menu.h"
-#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
-static ScoreRecord scores[5];
+static *ScoreRecord scoreboard;
 static int scoreCount = 0;
-static float volume = 1.0f;
 static int letterCount = 0;
 
 static GameData *gameData;
 
-void InitMenu(GameData *gData) {
+void InitMenu(GameData *gData, ScoreRecord *score) {
     gameData = gData;
-    FILE *fileOpts = fopen("info/options.txt", "r");
-    if (fileOpts != NULL) {
-        fscanf(fileOpts, "%f", &volume);
-        fclose(fileOpts);
-    }
-        
-    SetMasterVolume(volume);
+    scoreboard = score;
 
-    FILE *fileScore = fopen("info/scoreboard.txt", "r");
-    scoreCount = 0;
-    if (fileScore != NULL) {
-        while (scoreCount < 5 && fscanf(fileScore, "%s %d", scores[scoreCount].nick, &scores[scoreCount].score) == 2) {
+    for (int i = 0; i < 5; i++) {
+        if (scoreboard[i].score > 0) {
             scoreCount++;
         }
-        fclose(fileScore);
     }
 }
 
@@ -113,10 +102,12 @@ void UpdateGameOver(void) {
 
     if (CheckCollisionPointRec(mousePos, retryButton) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         gameData->currentState = STATE_GAME; 
+        PlaySFX("ui/clickSelect.wav");
     }
 
     if (CheckCollisionPointRec(mousePos, menuButton) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         gameData->currentState = STATE_MENU;
+        PlaySFX("ui/clickSelect.wav");
     }
 }
 

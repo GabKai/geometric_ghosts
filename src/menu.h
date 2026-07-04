@@ -6,11 +6,11 @@
 #include "common/audio_manager.h"
 
 typedef struct {
-    char nick[11];
+    char nick[16];
     int score;
 } ScoreRecord;
 
-void InitMenu(GameData *gData);
+void InitMenu(GameData *gData, ScoreRecord *score);
 void UpdateMenu(void);
 void DrawMenu(void);
 void UpdateGameOver(void);

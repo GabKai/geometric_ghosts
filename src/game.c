@@ -1,4 +1,5 @@
 #include "game.h"
+#include <stdio.h> 
 #include <string.h>
 #include <math.h>
 
@@ -14,8 +15,8 @@ static GameData *gameData;
 void InitGame(GameData *gData) {
     gameData = gData;
 
-    player.hp = 1;
-    player.maxHp = 1;
+    player.hp = 100;
+    player.maxHp = 100;
     player.size = 32;
     player.position = (Vector2){ 0.0f, 0.0f }; 
     player.isVisible = true;
@@ -99,6 +100,7 @@ void DrawGame(void) {
             DrawLineV((Vector2){ startX, y }, (Vector2){ endX, y }, DARKGRAY);
         }
         
+        DrawRewards();
         DrawEnemies();
 
         if (player.invulnTimer > 0.0f) {      
@@ -120,8 +122,48 @@ void DrawGame(void) {
         DrawShoots();
 
     EndMode2D();
+}
 
-    DrawText("Pressione ESC para voltar ao Menu", 10, 10, 20, RAYWHITE);
+void DrawUI(void) {
+    float barX = 20.0f;
+    float barY = 20.0f;
+    float barWidth = 200.0f;
+    float barHeight = 25.0f;
+    
+    int maxHp = 100; 
+    float hpPercent = (float)player.hp / maxHp;
+    if (hpPercent < 0.0f) hpPercent = 0.0f; 
+
+    DrawRectangle(barX, barY, barWidth, barHeight, BLACK);
+    DrawRectangleLines(barX, barY, barWidth, barHeight, DARKGRAY);
+
+    Color hpColor = GREEN;
+    if (hpPercent <= 0.25f) {
+        hpColor = RED;       
+    } else if (hpPercent <= 0.5f) {
+        hpColor = ORANGE;      
+    }
+
+    DrawRectangle(barX + 2, barY + 2, (int)((barWidth - 4) * hpPercent), barHeight - 4, hpColor);
+
+    char hpText[16];
+    sprintf(hpText, "%d / %d", player.hp, maxHp);
+    int textWidth = MeasureText(hpText, 14);
+
+    DrawText(hpText, barX + (barWidth / 2) - (textWidth / 2), barY + 5, 14, WHITE);
+
+
+    char scoreText[50];
+    sprintf(scoreText, "SCORE: %06d", gameData->score); 
+    
+    int scoreTextWidth = MeasureText(scoreText, 24);
+    float scoreX = GetScreenWidth() - scoreTextWidth - 20.0f; 
+    float scoreY = 20.0f;
+
+    DrawText(scoreText, scoreX + 2, scoreY + 2, 24, BLACK);
+    DrawText(scoreText, scoreX, scoreY, 24, GOLD);
+    
+    DrawText("Pressione ESC para voltar ao Menu", 20, 55, 20, RAYWHITE);
 }
 
 void UnloadGame(void) {
@@ -134,6 +176,11 @@ void UnloadGame(void) {
 void CheckCollisions(void){    
     CheckPlayerEnemiesCollisions();
     CheckProjectilesCollisions();
+    UpdateAndCheckRewardCollisions(
+        player.position, 
+        &player.hp,        
+        &gameData->score 
+    );
 }
 
 void CheckPlayerEnemiesCollisions(void) {
@@ -200,6 +247,7 @@ void CheckProjectilesCollisions(void){
                         if (enemy->hp <= 0) {
                             enemy->active = false;
                             
+                            EnemyDeath(enemy->position, enemy->config.rarity);
                             SpawnShoot(enemy->config.deathTemplateName, enemy->position, player.position, enemy->config.deathShooterInfo, false);
                         }                        
                         break; 
