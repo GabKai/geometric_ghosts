@@ -9,7 +9,11 @@ static int rarityTemplateCount[] = {0,0,0};
 
 static Enemy activeEnemies[MAX_ACTIVE_ENEMIES];
 
-static float spawnTimer = 0.0f;
+static float spawnInterval = INITAL_SPAWN_INTERVAL;
+static float spawnTimer = INITAL_SPAWN_INTERVAL;
+static int spawnCount = 1;
+static const float difficultyIncreaseInterval = 5.0f;
+static float difficultyIncreaseTimer = 0.0f;
 
 void LoadEnemyTemplates(void) {
     FILE *file = fopen("info/enemies.txt", "r");
@@ -75,69 +79,85 @@ void LoadEnemyTemplates(void) {
 void SpawnEnemy(Vector2 playerPos) {
     if (enemyTemplateCount == 0) return;
 
-    spawnTimer += GetFrameTime();
-    if (spawnTimer >= 2.0f) {
+    float deltaTime = GetFrameTime();
+
+    difficultyIncreaseTimer += deltaTime;
+    if (difficultyIncreaseTimer >= difficultyIncreaseInterval) {
+        difficultyIncreaseTimer = 0.0f;
+        
+        if (spawnInterval > MIN_SPAWN_INTERVAL) {
+            spawnInterval -= SPAWN_INTERVAL_DECREASE;
+        }else{
+            spawnInterval = 2.0f * MIN_SPAWN_INTERVAL;
+            spawnCount++;
+        }
+    }
+
+    spawnTimer += deltaTime;
+    if (spawnTimer >= spawnInterval) {
         spawnTimer = 0.0f;
     }else{
         return;
     }
 
-    int idx = -1;
-    for (int i = 0; i < MAX_ACTIVE_ENEMIES; i++) {
-        if (!activeEnemies[i].active) {
-            idx = i;
-            break;
-        }
-    }
-    if (idx == -1) return;
-
-    int rarity = 0;
-    if (GetRandomValue(0, 1) == 1){
-        rarity = 1;
-        if (GetRandomValue(0, 2) == 2){
-            rarity = 2;
-        }
-    }
-
-    while(rarityTemplateCount[rarity] == 0){
-        rarity--;
-
-        if (rarity < 0){
-            return;
-        }
-    }
-
-    int randTemplate = GetRandomValue(1, rarityTemplateCount[rarity]);
-
-    int idxTemplate = 0;
-    for (int i = 0; i < enemyTemplateCount; i++) {
-        if (enemyTemplates[i].rarity == rarity) {
-            randTemplate--;
-            if (randTemplate <= 0) {
-                idxTemplate = i;
+    for (int q = 0; q < spawnCount; q++) {
+        int idx = -1;
+        for (int i = 0; i < MAX_ACTIVE_ENEMIES; i++) {
+            if (!activeEnemies[i].active) {
+                idx = i;
                 break;
             }
         }
-    }
-    
-    Enemy *e = &activeEnemies[idx];
-    e->active = true;
-    e->config = enemyTemplates[idxTemplate];
-    e->hp = e->config.maxHp;
-    float randomPercent = GetRandomValue(0, 100) / 100.0f;
-    e->cooldownTimer = randomPercent * e->config.shootCooldown;
+        if (idx == -1) return;
 
-    float offsetX = 2000.0f;
-    float offsetY = 1500.0f;
+        int rarity = 0;
+        if (GetRandomValue(0, 1) == 1){
+            rarity = 1;
+            if (GetRandomValue(0, 2) == 2){
+                rarity = 2;
+            }
+        }
 
-    if (GetRandomValue(0, 1) == 0) {
-        float dx = (GetRandomValue(0, 1) == 0) ? -1.0f : 1.0f;
-        e->position.x = playerPos.x + (dx * offsetX);
-        e->position.y = playerPos.y + (float)GetRandomValue((int)-offsetY, (int)offsetY);
-    } else {
-        float dy = (GetRandomValue(0, 1) == 0) ? -1.0f : 1.0f;
-        e->position.y = playerPos.y + (dy * offsetY);
-        e->position.x = playerPos.x + (float)GetRandomValue((int)-offsetX, (int)offsetX);
+        while(rarityTemplateCount[rarity] == 0){
+            rarity--;
+
+            if (rarity < 0){
+                return;
+            }
+        }
+
+        int randTemplate = GetRandomValue(1, rarityTemplateCount[rarity]);
+
+        int idxTemplate = 0;
+        for (int i = 0; i < enemyTemplateCount; i++) {
+            if (enemyTemplates[i].rarity == rarity) {
+                randTemplate--;
+                if (randTemplate <= 0) {
+                    idxTemplate = i;
+                    break;
+                }
+            }
+        }
+
+        Enemy *e = &activeEnemies[idx];
+        e->active = true;
+        e->config = enemyTemplates[idxTemplate];
+        e->hp = e->config.maxHp;
+        float randomPercent = GetRandomValue(0, 100) / 100.0f;
+        e->cooldownTimer = randomPercent * e->config.shootCooldown;
+
+        float offsetX = 2000.0f;
+        float offsetY = 1500.0f;
+
+        if (GetRandomValue(0, 1) == 0) {
+            float dx = (GetRandomValue(0, 1) == 0) ? -1.0f : 1.0f;
+            e->position.x = playerPos.x + (dx * offsetX);
+            e->position.y = playerPos.y + (float)GetRandomValue((int)-offsetY, (int)offsetY);
+        } else {
+            float dy = (GetRandomValue(0, 1) == 0) ? -1.0f : 1.0f;
+            e->position.y = playerPos.y + (dy * offsetY);
+            e->position.x = playerPos.x + (float)GetRandomValue((int)-offsetX, (int)offsetX);
+        }
     }
 }
 

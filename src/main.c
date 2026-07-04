@@ -5,7 +5,10 @@
 #include "common/states.h"
 
 static GameData gameData;
-static ScoreRecord scoreboard[6];
+static ScoreEntry scoreboard[6];
+
+void LoadScoreboard(void);
+void SaveToScoreboard(void);
 
 int main(void)
 {
@@ -21,8 +24,9 @@ int main(void)
     gameData.score = 0;
     bool gameInitialized = false;
 
+    LoadScoreboard();
     InitAudioManager();
-    InitMenu(&gameData, &scoreboard);
+    InitMenu(&gameData, scoreboard);
 
     while (!WindowShouldClose())
     {
@@ -35,14 +39,20 @@ int main(void)
         case STATE_GAME:
             if (!gameInitialized)
             {
+                gameData.score = 0;
                 InitGame(&gameData);
                 gameInitialized = true;
             }
             UpdateGame();
             break;
         case STATE_GAMEOVER:
+            if (gameInitialized){   
+                SaveToScoreboard();
+                ResetMenu();
+                gameInitialized = false;
+                InitMenu(&gameData, scoreboard);
+            }
             UpdateGameOver();
-            gameInitialized = false;
             break;
         default:
             break;
@@ -75,7 +85,7 @@ int main(void)
 
     UnloadAudioManager();
     UnloadMenu();
-    if (gameInitialized){        
+    if (gameInitialized){     
         UnloadGame();
     }
 
@@ -84,7 +94,28 @@ int main(void)
     return 0;
 }
 
-void SaveToScoreboard() {
+void LoadScoreboard(void){
+    for (int i = 0; i < 6; i++) {
+        scoreboard[i].score = 0;
+        scoreboard[i].nick[0] = '\0';
+    }
+
+    FILE *file = fopen("info/scoreboard.txt", "r");
+    if (file == NULL) {
+        TraceLog(LOG_INFO, "SCOREBOARD: Arquivo nao encontrado. Criando uma lista limpa.");
+        return;
+    }
+
+    int count = 0;
+    while (count < 5 && fscanf(file, "%15s %d", scoreboard[count].nick, &scoreboard[count].score) == 2) {
+        count++;
+    }
+
+    fclose(file);
+    TraceLog(LOG_INFO, "SCOREBOARD: %d recordes carregados com sucesso!", count);
+}
+
+void SaveToScoreboard(void) {
     int count = 0;
     while (count < 5 && scoreboard[count].score > 0) {
         count++;
@@ -98,7 +129,7 @@ void SaveToScoreboard() {
     for (int i = 0; i < count - 1; i++) {
         for (int j = 0; j < count - i - 1; j++) {
             if (scoreboard[j].score < scoreboard[j + 1].score) {
-                ScoreRecord temp = scoreboard[j];
+                ScoreEntry temp = scoreboard[j];
                 scoreboard[j] = scoreboard[j + 1];
                 scoreboard[j + 1] = temp;
             }
@@ -116,8 +147,9 @@ void SaveToScoreboard() {
         return;
     }
 
-    int limit = (count > 5) ? 5 : count;
-    for (int i = 0; i < limit; i++) {
+    for (int i = 0; i < 5; i++) {
+        if (i >= count) { break; }
+
         fprintf(file, "%s %d\n", scoreboard[i].nick, scoreboard[i].score);
     }
     

@@ -14,4 +14,9 @@ typedef struct {
     int score;
 } GameData;
 
+typedef struct {
+    char nick[16];
+    int score;
+} ScoreEntry;
+
 #endif

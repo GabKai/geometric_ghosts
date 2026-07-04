@@ -1,17 +1,21 @@
 #include "menu.h"
-#include <string.h>
 #include <ctype.h>
 
-static *ScoreRecord scoreboard;
+static ScoreEntry *scoreboard;
 static int scoreCount = 0;
 static int letterCount = 0;
 
 static GameData *gameData;
 
-void InitMenu(GameData *gData, ScoreRecord *score) {
+void InitMenu(GameData *gData, ScoreEntry *score) {
     gameData = gData;
     scoreboard = score;
 
+    ResetMenu();
+}
+
+void ResetMenu(void){  
+    scoreCount = 0;
     for (int i = 0; i < 5; i++) {
         if (scoreboard[i].score > 0) {
             scoreCount++;
@@ -70,7 +74,7 @@ void DrawMenu(void) {
     int startY = 300;
     for (int i = 0; i < scoreCount; i++) {
         char buffer[50];
-        sprintf(buffer, "%d. %-12s %d", i + 1, scores[i].nick, scores[i].score);
+        sprintf(buffer, "%d. %-12s %d", i + 1, scoreboard[i].nick, scoreboard[i].score);
         DrawText(buffer, GetScreenWidth()/2 - 100, startY + (i * 25), 18, GRAY);
     }
     if (scoreCount == 0) {

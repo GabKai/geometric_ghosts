@@ -2,15 +2,13 @@
 #define MENU_H
 
 #include "raylib.h"
+#include <stdio.h>
+#include <string.h>
 #include "common/states.h"
 #include "common/audio_manager.h"
 
-typedef struct {
-    char nick[16];
-    int score;
-} ScoreRecord;
-
-void InitMenu(GameData *gData, ScoreRecord *score);
+void InitMenu(GameData *gData, ScoreEntry *score);
+void ResetMenu(void);
 void UpdateMenu(void);
 void DrawMenu(void);
 void UpdateGameOver(void);

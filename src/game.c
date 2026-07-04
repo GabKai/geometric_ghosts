@@ -3,14 +3,15 @@
 #include <string.h>
 #include <math.h>
 
-const static float INVUL_TIME = 3.0f;
-const static float STUN_TIME = 1.0f;
+const static float INVUL_TIME = 1.9f;
+const static float STUN_TIME = 0.85f;
 
 static Player player;
 static Camera2D camera;
 static bool textureLoaded = false;
 
 static GameData *gameData;
+static float time;
 
 void InitGame(GameData *gData) {
     gameData = gData;
@@ -33,6 +34,7 @@ void InitGame(GameData *gData) {
 
     LoadShootTemplates();
     LoadEnemyTemplates();
+    InitRewards();
 
     camera.target = player.position;
     camera.offset = (Vector2){ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
@@ -43,6 +45,7 @@ void InitGame(GameData *gData) {
 void UpdateGame(void) {
     float deltaTime = GetFrameTime();
 
+    time += deltaTime;
     CheckCollisions();
 
     Vector2 movement = { 0.0f, 0.0f };
@@ -162,6 +165,16 @@ void DrawUI(void) {
 
     DrawText(scoreText, scoreX + 2, scoreY + 2, 24, BLACK);
     DrawText(scoreText, scoreX, scoreY, 24, GOLD);
+
+    char timeText[50];
+    sprintf(timeText, "TIME: %04.2f", time); 
+    
+    int timeTextWidth = MeasureText(timeText, 24);
+    float timeX = GetScreenWidth() - timeTextWidth - 20.0f; 
+    float timeY = 50.0f;
+
+    DrawText(timeText, timeX + 2, timeY + 2, 24, BLACK);
+    DrawText(timeText, timeX, timeY, 24, RAYWHITE);
     
     DrawText("Pressione ESC para voltar ao Menu", 20, 55, 20, RAYWHITE);
 }

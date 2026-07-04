@@ -1,7 +1,7 @@
 #include "reward.h"
 #include <math.h>
 
-static const float SCORE_SIZE = 5.0f;
+static const float SCORE_SIZE = 7.0f;
 
 static RewardItem rewards[MAX_REWARDS];
 
@@ -40,8 +40,8 @@ void UpdateAndCheckRewardCollisions(Vector2 playerPos, int *playerHp, int *curre
             
             switch(rewards[i].type) {
                 case REWARD_SCORE:
-                int scoreGain = 5*(rewards[i].rarity + 1);
-                int hpHeal = rewards[i].rarity + 1;
+                int scoreGain = 50*(rewards[i].rarity + 1);
+                int hpHeal = rewards[i].rarity + 2;
 
                 *currentScore += scoreGain;
                 *playerHp += hpHeal;
