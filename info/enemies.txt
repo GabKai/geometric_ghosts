@@ -6,6 +6,9 @@ rusher
 350.0
 0.0
 3.0
+morte:
+sqrcircle
+-1.57 0.0 300.0 -600.0 20
 ;
 shooter
 0

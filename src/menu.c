@@ -8,7 +8,10 @@ static int scoreCount = 0;
 static float volume = 1.0f;
 static int letterCount = 0;
 
-void InitMenu(void) {
+static GameData *gameData;
+
+void InitMenu(GameData *gData) {
+    gameData = gData;
     FILE *fileOpts = fopen("info/options.txt", "r");
     if (fileOpts != NULL) {
         fscanf(fileOpts, "%f", &volume);
@@ -27,7 +30,7 @@ void InitMenu(void) {
     }
 }
 
-void UpdateMenu(GameState *currentState, char *playerNick) {
+void UpdateMenu(void) {
     int key = GetCharPressed();
     
     while (key > 0) {
@@ -36,9 +39,9 @@ void UpdateMenu(GameState *currentState, char *playerNick) {
              (key >= '0' && key <= '9') || 
              key == '_') && (letterCount < 10)) 
         {
-            playerNick[letterCount] = (char)key;
+            gameData->playerNick[letterCount] = (char)key;
             letterCount++;
-            playerNick[letterCount] = '\0';
+            gameData->playerNick[letterCount] = '\0';
         }
         key = GetCharPressed();
     }
@@ -46,7 +49,7 @@ void UpdateMenu(GameState *currentState, char *playerNick) {
     if (IsKeyPressed(KEY_BACKSPACE)) {
         letterCount--;
         if (letterCount < 0) letterCount = 0;
-        playerNick[letterCount] = '\0';
+        gameData->playerNick[letterCount] = '\0';
     }
 
     bool isNickValid = (letterCount >= 3 && letterCount <= 10);
@@ -56,13 +59,13 @@ void UpdateMenu(GameState *currentState, char *playerNick) {
 
     if (isNickValid && CheckCollisionPointRec(mousePos, playButton)) {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            *currentState = STATE_GAME; 
+            gameData->currentState = STATE_GAME; 
             PlaySFX("ui/clickSelect.wav");
         }
     }
 }
 
-void DrawMenu(const char *playerNick) {
+void DrawMenu(void) {
     ClearBackground(BLACK);
 
     DrawText("GEOMETRIC GHOSTS", GetScreenWidth()/2 - MeasureText("GEOMETRIC GHOSTS", 40)/2, 50, 40, PURPLE);
@@ -71,7 +74,7 @@ void DrawMenu(const char *playerNick) {
     
     DrawRectangleLines(GetScreenWidth()/2 - 150, 180, 300, 40, DARKGRAY);
     if (letterCount > 0) {
-        DrawText(playerNick, GetScreenWidth()/2 - 140, 190, 20, RAYWHITE);
+        DrawText(gameData->playerNick, GetScreenWidth()/2 - 140, 190, 20, RAYWHITE);
     }
 
     DrawText("TOP 5 SCOREBOARD", GetScreenWidth()/2 - 100, 260, 20, GOLD);
@@ -100,6 +103,51 @@ void DrawMenu(const char *playerNick) {
         }
         DrawText("PLAY", playButton.x + 70, playButton.y + 15, 20, WHITE);
     }
+}
+
+void UpdateGameOver(void) {
+    Rectangle retryButton = { GetScreenWidth()/2 - 120, 240, 240, 50 };
+    Rectangle menuButton = { GetScreenWidth()/2 - 120, 310, 240, 50 };
+    
+    Vector2 mousePos = GetMousePosition();
+
+    if (CheckCollisionPointRec(mousePos, retryButton) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        gameData->currentState = STATE_GAME; 
+    }
+
+    if (CheckCollisionPointRec(mousePos, menuButton) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        gameData->currentState = STATE_MENU;
+    }
+}
+
+void DrawGameOver(void) {
+    const char *title = "GAME OVER";
+    DrawText(title, GetScreenWidth()/2 - MeasureText(title, 40)/2, 50, 40, RED);
+
+    char scoreBuffer[50];
+    sprintf(scoreBuffer, "PONTUACAO FINAL: %d", gameData->score);
+    DrawText(scoreBuffer, GetScreenWidth()/2 - MeasureText(scoreBuffer, 22)/2, 140, 22, GOLD);
+
+    Rectangle retryButton = { GetScreenWidth()/2 - 120, 240, 240, 50 };
+    Rectangle menuButton = { GetScreenWidth()/2 - 120, 310, 240, 50 };
+    
+    Vector2 mousePos = GetMousePosition();
+
+    if (CheckCollisionPointRec(mousePos, retryButton)) {
+        DrawRectangleRec(retryButton, DARKPURPLE);
+    } else {
+        DrawRectangleRec(retryButton, PURPLE);
+    }
+    const char *retryText = "JOGAR DE NOVO";
+    DrawText(retryText, retryButton.x + (retryButton.width/2 - MeasureText(retryText, 18)/2), retryButton.y + 16, 18, WHITE);
+
+    if (CheckCollisionPointRec(mousePos, menuButton)) {
+        DrawRectangleRec(menuButton, DARKGRAY);
+    } else {
+        DrawRectangleRec(menuButton, GRAY);
+    }
+    const char *menuText = "VOLTAR AO MENU";
+    DrawText(menuText, menuButton.x + (menuButton.width/2 - MeasureText(menuText, 18)/2), menuButton.y + 16, 18, WHITE);
 }
 
 void UnloadMenu(void) {

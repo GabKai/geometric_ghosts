@@ -162,3 +162,14 @@ void DrawShoots(void) {
         }
     }
 }
+
+int GetActiveShootGroupsCount(void) {
+    return MAX_ACTIVE_GROUPS;
+}
+
+ShootGroup* GetShootGroupInstance(int index) {
+    if (index >= 0 && index < MAX_ACTIVE_GROUPS && activeGroups[index].active) {
+        return &activeGroups[index];
+    }
+    return NULL;
+}

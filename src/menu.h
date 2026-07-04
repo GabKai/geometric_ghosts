@@ -10,9 +10,11 @@ typedef struct {
     int score;
 } ScoreRecord;
 
-void InitMenu(void);
-void UpdateMenu(GameState *currentState, char *playerNick);
-void DrawMenu(const char *playerNick);
+void InitMenu(GameData *gData);
+void UpdateMenu(void);
+void DrawMenu(void);
+void UpdateGameOver(void);
+void DrawGameOver(void);
 void UnloadMenu(void);
 
 #endif

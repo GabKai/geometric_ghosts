@@ -8,16 +8,25 @@
 #include "game/enemies.h"
 
 typedef struct {
-    Vector2 position;
-    float speed;
     Texture2D texture;
+    Vector2 position;
+    int size;
+    int maxHp;
+    int hp;
+    float speed;
     ShooterInfo bonus;
-    char nick[11];
+    float invulnTimer;       
+    float blinkTimer;        
+    bool isVisible;
 } Player;
 
-void InitGame(const char *playerNick);
-void UpdateGame(GameState *currentState);
+void InitGame(GameData *gData);
+void UpdateGame(void);
 void DrawGame(void);
 void UnloadGame(void);
+void CheckCollisions(void);
+void CheckPlayerEnemiesCollisions(void);
+void CheckProjectilesCollisions(void);
+void PlayerDamaged(int damage);
 
 #endif

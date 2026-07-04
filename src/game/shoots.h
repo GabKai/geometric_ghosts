@@ -59,5 +59,7 @@ void LoadShootTemplates(void);
 void SpawnShoot(const char *name, Vector2 origin, Vector2 target, ShooterInfo shooter, bool isAlly);
 void UpdateShoots(void);
 void DrawShoots(void);
+int GetActiveShootGroupsCount(void);
+ShootGroup* GetShootGroupInstance(int index);
 
 #endif

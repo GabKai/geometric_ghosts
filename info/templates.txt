@@ -10,7 +10,7 @@ cooldown
 tiro: // opcional
 nome template
 aux1 aux2 aux3 bonusSpeed bonusDamage
-death: // opcional
+morte: // opcional
 nome template
 aux1 aux2 aux3 bonusSpeed bonusDamage
 ;

@@ -12,29 +12,34 @@ int main(void)
     SetTargetFPS(60);
     SetExitKey(KEY_NULL);
 
-    GameState currentState = STATE_MENU;
-    char playerNick[11] = "\0";
-
+    GameData gameData;
+    gameData.currentState = STATE_MENU;
+    gameData.playerNick[10] = '\0';
+    gameData.score = 0;
     bool gameInitialized = false;
 
     InitAudioManager();
-    InitMenu();
+    InitMenu(&gameData);
 
     while (!WindowShouldClose())
     {
-        switch (currentState)
+        switch (gameData.currentState)
         {
         case STATE_MENU:
-            UpdateMenu(&currentState, playerNick);
+            UpdateMenu();
             gameInitialized = false;
             break;
         case STATE_GAME:
             if (!gameInitialized)
             {
-                InitGame(playerNick);
+                InitGame(&gameData);
                 gameInitialized = true;
             }
-            UpdateGame(&currentState);
+            UpdateGame();
+            break;
+        case STATE_GAMEOVER:
+            UpdateGameOver();
+            gameInitialized = false;
             break;
         default:
             break;
@@ -42,13 +47,17 @@ int main(void)
 
         BeginDrawing();
 
-        switch (currentState)
+        switch (gameData.currentState)
         {
         case STATE_MENU:
-            DrawMenu(playerNick);
+            DrawMenu();
             break;
         case STATE_GAME:
             DrawGame();
+            break;
+        case STATE_GAMEOVER:
+            DrawGame();
+            DrawGameOver();
             break;
         default:
             break;

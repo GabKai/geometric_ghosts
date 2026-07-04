@@ -10,7 +10,7 @@ game/shoot/shoot.wav
 0.0
 ;
 sqrcircle
-circle+
+circle
 4
 10
 10.0

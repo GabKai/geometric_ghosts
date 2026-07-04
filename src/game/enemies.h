@@ -35,11 +35,14 @@ typedef struct {
     Vector2 position;
     int hp;
     float cooldownTimer;
+    float stunTimer;
 } Enemy;
 
 void LoadEnemyTemplates(void);
 void SpawnEnemy(Vector2 playerPos);
 void UpdateEnemies(Vector2 playerPos);
 void DrawEnemies(void);
+int GetActiveEnemiesCount(void);
+Enemy* GetEnemyInstance(int index);
 
 #endif

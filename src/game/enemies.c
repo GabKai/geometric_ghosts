@@ -149,6 +149,11 @@ void UpdateEnemies(Vector2 playerPos) {
 
         Enemy *e = &activeEnemies[i];
 
+        if (e->stunTimer > 0.0f) {
+            e->stunTimer -= deltaTime;
+            continue; 
+        }
+
         float dx = playerPos.x - e->position.x;
         float dy = playerPos.y - e->position.y;
         float dist = sqrtf(dx*dx + dy*dy);
@@ -197,4 +202,15 @@ void DrawEnemies(void) {
         float hpPercent = (float)e->hp / e->config.maxHp;
         DrawRectangle(e->position.x - 15, e->position.y - 25, (int)(30 * hpPercent), 4, GREEN);
     }
+}
+
+int GetActiveEnemiesCount(void) {
+    return MAX_ACTIVE_ENEMIES;
+}
+
+Enemy* GetEnemyInstance(int index) {
+    if (index >= 0 && index < MAX_ACTIVE_ENEMIES && activeEnemies[index].active) {
+        return &activeEnemies[index];
+    }
+    return NULL;
 }
