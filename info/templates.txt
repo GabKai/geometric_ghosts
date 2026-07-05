@@ -2,6 +2,7 @@
 nome
 raridade
 tamanho
+quant de frames
 vida
 damage
 velocidade

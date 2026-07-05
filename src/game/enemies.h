@@ -15,6 +15,7 @@ typedef struct {
     int rarity;
     int maxHp;
     int size;
+    int frames;
     float speed;
     int damage;
     float shootCooldown;
@@ -37,6 +38,8 @@ typedef struct {
     EnemyTemplate config;
     Vector2 position;
     int hp;
+    int frame;
+    float frameTimer;
     float cooldownTimer;
     float stunTimer;
 } Enemy;

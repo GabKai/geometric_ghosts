@@ -6,6 +6,7 @@
 #define MAX_SHOOT_TEMPLATES 16
 #define MAX_PROJECTILES_PER_GROUP 32
 #define MAX_ACTIVE_GROUPS 64
+#define PROJECTILE_SIZE_BASE 4.0f
 
 typedef enum {
     MOVE_LINEAR,
@@ -37,9 +38,11 @@ typedef struct {
     bool active;
     bool isAlly;         
     ShootTemplate config;
+    int count;
     Vector2 refPosition;   
     Vector2 direction;     
-    float currentTime;    
+    float currentTime;
+    int radius;    
     int damage;
     float refSpeed;
     float aux1;

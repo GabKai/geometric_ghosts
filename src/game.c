@@ -9,6 +9,8 @@ const static float STUN_TIME = 0.85f;
 static Player player;
 static Camera2D camera;
 static bool textureLoaded = false;
+static int frame = 0;
+static float frameTimer = 0.0f;
 
 static GameData *gameData;
 static float time;
@@ -115,11 +117,16 @@ void DrawGame(void) {
         }
 
         if (player.isVisible && textureLoaded) {
-            Vector2 positionOffset = { 
-                player.position.x - player.texture.width / 2.0f, 
-                player.position.y - player.texture.height / 2.0f 
-            };
-            DrawTextureV(player.texture, positionOffset, WHITE);
+            frameTimer += deltaTime;
+            if (frameTimer >= 0.25f) {
+                frameTimer = 0.0f;
+                frame = (frame + 1) % 4; 
+            }
+            Rectangle sourceRec = { (float) player.size*frame, 0.0f, (float)player.size, (float)player.size };
+            Rectangle destRec = { player.position.x, player.position.y, player.size, player.size };
+            Vector2 origin = { player.size / 2.0f, player.size / 2.0f }; 
+            
+            DrawTexturePro(player.texture, sourceRec, destRec, origin, 0.0f, WHITE);
         }
 
         DrawShoots();

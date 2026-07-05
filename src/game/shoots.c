@@ -86,24 +86,27 @@ void SpawnShoot(const char *name, Vector2 origin, Vector2 target, ShooterInfo sh
     g->aux2 = g->config.aux2 + shooter.aux2Mod;
     g->aux3 = g->config.aux3 + shooter.aux3Mod;
 
+    g->radius = (int) (0.5f + ((float)g->damage * PROJECTILE_SIZE_BASE / 10.0f));
+
     float dx = target.x - origin.x;
     float dy = target.y - origin.y;
     float len = sqrtf(dx*dx + dy*dy);
     g->direction = (len > 0) ? (Vector2){ dx/len, dy/len } : (Vector2){ 1, 0 };
     
-    int count = g->config.count;
+    g->count = g->config.count;
+
     switch (g->config.moveType)
     {
     case MOVE_SPLASH:
-        count += (int) g->aux2;
+        g->count += (int) g->aux2;
         break;    
     default:
         break;
     }
 
-    if (count > MAX_PROJECTILES_PER_GROUP) count = MAX_PROJECTILES_PER_GROUP;
+    if (g->count > MAX_PROJECTILES_PER_GROUP) g->count = MAX_PROJECTILES_PER_GROUP;
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < g->count; i++) {
         g->projectiles[i].active = true;
         g->projectiles[i].localPosition = origin;
 
@@ -112,7 +115,7 @@ void SpawnShoot(const char *name, Vector2 origin, Vector2 target, ShooterInfo sh
                 g->projectiles[i].offset = i * g->aux1;
                 break;
             case MOVE_CIRCLE:
-                g->projectiles[i].offset = i * (2.0f * PI / count);
+                g->projectiles[i].offset = i * (2.0f * PI / g->count);
                 break;
             case MOVE_SINE:
                 g->projectiles[i].offset = i * PI;
@@ -150,7 +153,7 @@ void UpdateShoots(void) {
         g->refPosition.x += g->direction.x * g->refSpeed * deltaTime;
         g->refPosition.y += g->direction.y * g->refSpeed * deltaTime;
 
-        for (int p = 0; p < g->config.count; p++) {
+        for (int p = 0; p < g->count; p++) {
             if (!g->projectiles[p].active) continue;
 
             switch(g->config.moveType){
@@ -193,11 +196,11 @@ void DrawShoots(void) {
         ShootGroup *g = &activeGroups[i];
         Color shootColor = g->isAlly ? BLUE : RED;
 
-        for (int p = 0; p < g->config.count; p++) {
+        for (int p = 0; p < g->count; p++) {
             if (!g->projectiles[p].active) continue;
             
-            DrawCircleV(g->projectiles[p].localPosition, 6, shootColor);
-            DrawCircleV(g->projectiles[p].localPosition, 3, WHITE);
+            DrawCircleV(g->projectiles[p].localPosition, g->radius, shootColor);
+            DrawCircleV(g->projectiles[p].localPosition, g->radius / 2, WHITE);
         }
     }
 }

@@ -31,6 +31,7 @@ void LoadEnemyTemplates(void) {
         
         fscanf(file, "%d", &t->rarity);
         fscanf(file, "%d", &t->size);
+        fscanf(file, "%d", &t->frames);
         fscanf(file, "%d", &t->maxHp);
         fscanf(file, "%d", &t->damage);
         fscanf(file, "%f", &t->speed);
@@ -202,13 +203,20 @@ void UpdateEnemies(Vector2 playerPos) {
 }
 
 void DrawEnemies(void) {
+    float deltaTime = GetFrameTime();
+
     for (int i = 0; i < MAX_ACTIVE_ENEMIES; i++) {
         if (!activeEnemies[i].active) continue;
 
         Enemy *e = &activeEnemies[i];
 
         if (e->config.textureLoaded) { 
-            Rectangle sourceRec = { 0.0f, 0.0f, (float)e->config.texture.width, (float)e->config.texture.height };
+            e->frameTimer += deltaTime;
+            if (e->frameTimer >= 0.25f) {
+                e->frameTimer = 0.0f;
+                e->frame = (e->frame + 1) % e->config.frames; 
+            }
+            Rectangle sourceRec = { (float) e->config.size*e->frame, 0.0f, (float)e->config.size, (float)e->config.size };
             Rectangle destRec = { e->position.x, e->position.y, e->config.size, e->config.size };
             Vector2 origin = { e->config.size / 2.0f, e->config.size / 2.0f }; 
             
