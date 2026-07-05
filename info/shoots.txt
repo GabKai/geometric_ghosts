@@ -1,5 +1,6 @@
 simple
 linear
+0.5
 1
 10
 10.0
@@ -11,6 +12,7 @@ game/shoot/shoot.wav
 ;
 line
 linear
+1.0
 4
 10
 10.0
@@ -22,10 +24,11 @@ game/shoot/shoot.wav
 ;
 sqrcircle
 circle
+1.0
 4
 10
 10.0
-600.0
+0.0
 game/shoot/shoot.wav
 1.57
 0.0
@@ -33,8 +36,9 @@ game/shoot/shoot.wav
 ;
 dna
 sine
+1.5
 2
-25
+15
 10.0
 600.0
 game/shoot/shoot.wav
@@ -44,6 +48,7 @@ game/shoot/shoot.wav
 ;
 shotgun
 splash
+1.5
 3
 20
 9.0

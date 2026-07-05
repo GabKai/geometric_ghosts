@@ -32,6 +32,7 @@ void LoadShootTemplates(void) {
         fscanf(file, "%s", typeStr);
         templates[templateCount].moveType = ParseMoveType(typeStr);
         
+        fscanf(file, "%f", &templates[templateCount].cooldown);
         fscanf(file, "%d", &templates[templateCount].count);
         fscanf(file, "%d", &templates[templateCount].damage);
         fscanf(file, "%f", &templates[templateCount].duration);
@@ -214,4 +215,21 @@ ShootGroup* GetShootGroupInstance(int index) {
         return &activeGroups[index];
     }
     return NULL;
+}
+
+ShootTemplate* GetShootTemplate(const char *name) {
+    if (name == NULL) return NULL;
+
+    for (int i = 0; i < templateCount; i++) {
+        if (strcmp(templates[i].name, name) == 0) {
+            return &templates[i]; 
+        }
+    }
+
+    return NULL; 
+}
+
+ShootTemplate* GetRandomShootTemplate(void) {
+    int idx = GetRandomValue(0, templateCount - 1);
+    return &templates[idx];
 }

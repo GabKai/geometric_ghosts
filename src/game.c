@@ -11,6 +11,8 @@ static Camera2D camera;
 static bool textureLoaded = false;
 static int frame = 0;
 static float frameTimer = 0.0f;
+static float cooldownTimer = 0.0f;
+static bool isFiring = false;
 
 static GameData *gameData;
 static float time;
@@ -28,6 +30,8 @@ void InitGame(GameData *gData) {
     player.blinkTimer = 0.0f;
     player.invulnTimer = 0.0f;
     player.isVisible = true;
+    player.damageModifier = 0.0f;
+    player.cooldownModifier = 1.0f;
 
     if (FileExists("assets/sprites/player/sprite_base.png")) {
         player.texture = LoadTexture("assets/sprites/player/sprite_base.png");
@@ -37,6 +41,8 @@ void InitGame(GameData *gData) {
     LoadShootTemplates();
     LoadEnemyTemplates();
     InitRewards();
+
+    player.shootTemplate = *GetShootTemplate("simple");
 
     camera.target = player.position;
     camera.offset = (Vector2){ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
@@ -66,10 +72,17 @@ void UpdateGame(void) {
 
     camera.target = player.position;
 
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    isFiring = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
+
+    if (isFiring && cooldownTimer <= 0.0f){        
         Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
 
-        SpawnShoot("simple", player.position, mouseWorldPos, player.bonus, true);
+        player.bonus.bonusDamage = (int)(0.5f + player.shootTemplate.damage * player.damageModifier);
+        SpawnShoot(player.shootTemplate.name, player.position, mouseWorldPos, player.bonus, true);
+
+        cooldownTimer = player.shootTemplate.cooldown * player.cooldownModifier;
+    }else{
+        cooldownTimer -= deltaTime;
     }
 
     UpdateEnemies(player.position);
@@ -184,6 +197,37 @@ void DrawUI(void) {
     DrawText(timeText, timeX, timeY, 24, RAYWHITE);
     
     DrawText("Pressione ESC para voltar ao Menu", 20, 55, 20, RAYWHITE);
+
+    float boxWidth = 260.0f;
+    float boxHeight = 110.0f;
+    float paddingX = 20.0f;
+    float paddingY = 20.0f;
+    
+    float x = paddingX;
+    float y = GetScreenHeight() - boxHeight - paddingY;
+
+    DrawRectangleRec((Rectangle){ x, y, boxWidth, boxHeight }, Fade(BLACK, 0.6f));
+    DrawRectangleLinesEx((Rectangle){ x, y, boxWidth, boxHeight }, 2.0f, PURPLE);
+
+    float finalDamage = player.shootTemplate.damage * (1.0f + player.damageModifier);
+
+    float finalCooldown = player.shootTemplate.cooldown * player.cooldownModifier;
+
+    char buffer[64];
+    int startTextX = x + 15;
+    int startTextY = y + 12;
+    int lineSpacing = 22;
+
+    DrawText("STATUS", startTextX, startTextY, 14, GOLD);
+
+    sprintf(buffer, "DANO: %.1f", finalDamage);
+    DrawText(buffer, startTextX, startTextY + lineSpacing, 16, RAYWHITE);
+
+    sprintf(buffer, "VELOCIDADE: %.0f", player.speed);
+    DrawText(buffer, startTextX, startTextY + (lineSpacing * 2), 16, RAYWHITE);
+
+    sprintf(buffer, "RECARGA: %.2fs", finalCooldown);
+    DrawText(buffer, startTextX, startTextY + (lineSpacing * 3), 16, RAYWHITE);
 }
 
 void UnloadGame(void) {
@@ -196,11 +240,21 @@ void UnloadGame(void) {
 void CheckCollisions(void){    
     CheckPlayerEnemiesCollisions();
     CheckProjectilesCollisions();
-    UpdateAndCheckRewardCollisions(
-        player.position, 
-        &player.hp,        
-        &gameData->score 
-    );
+    RewardGain gain = UpdateAndCheckRewardCollisions(player.position);
+
+    if (gain.score > 0) {
+        gameData->score += gain.score;
+
+        player.hp += gain.hp;
+        if (player.hp > 100) player.hp = 100;
+
+        player.speed += gain.speedBonus;
+        player.damageModifier += gain.damageBonus;      
+        player.cooldownModifier -= gain.cooldownBonus;
+        if (player.cooldownModifier < MIN_COOLDOWN){
+            player.cooldownModifier = MIN_COOLDOWN;
+        }
+    }
 }
 
 void CheckPlayerEnemiesCollisions(void) {

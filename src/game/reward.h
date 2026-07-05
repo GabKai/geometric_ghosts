@@ -4,12 +4,26 @@
 #include "raylib.h"
 #include "../common/states.h"
 #include "../common/audio_manager.h"
+#include "shoots.h"
 
 #define MAX_REWARDS 150
 
 typedef enum RewardType {
-    REWARD_SCORE
+    REWARD_SCORE,       
+    REWARD_HEAL,        
+    REWARD_SPEED,      
+    REWARD_DAMAGE,      
+    REWARD_COOLDOWN   
 } RewardType;
+
+typedef struct {
+    int score;
+    int hp;
+    float damageBonus;
+    float speedBonus;
+    float cooldownBonus;
+} RewardGain;
+
 
 typedef struct {
     Vector2 position;
@@ -20,7 +34,7 @@ typedef struct {
 
 void InitRewards(void);
 void EnemyDeath(Vector2 position, int rarity);
-void UpdateAndCheckRewardCollisions(Vector2 playerPos, int *playerHp, int *currentScore);
+RewardGain UpdateAndCheckRewardCollisions(Vector2 playerPos);
 void DrawRewards(void);
 
 #endif

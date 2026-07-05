@@ -8,6 +8,8 @@
 #include "game/enemies.h"
 #include "game/reward.h"
 
+#define MIN_COOLDOWN 0.2f
+
 typedef struct {
     Texture2D texture;
     Vector2 position;
@@ -15,6 +17,9 @@ typedef struct {
     int maxHp;
     int hp;
     float speed;
+    float damageModifier;
+    float cooldownModifier;
+    ShootTemplate shootTemplate;
     ShooterInfo bonus;
     float invulnTimer;       
     float blinkTimer;        

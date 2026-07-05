@@ -18,6 +18,7 @@ typedef enum {
 typedef struct {
     char name[32];
     MoveType moveType;
+    float cooldown;
     int count;
     int damage;
     float duration;
@@ -66,5 +67,7 @@ void UpdateShoots(void);
 void DrawShoots(void);
 int GetActiveShootGroupsCount(void);
 ShootGroup* GetShootGroupInstance(int index);
+ShootTemplate* GetShootTemplate(const char *name);
+ShootTemplate* GetRandomShootTemplate(void);
 
 #endif

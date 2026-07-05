@@ -19,6 +19,7 @@ aux1 aux2 aux3 bonusSpeed bonusDamage
     TIRO:
 nome
 padrão de movimento
+cooldown (só para jogador)
 contagem de tiros
 dano
 duração
