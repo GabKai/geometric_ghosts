@@ -26,14 +26,22 @@ typedef struct {
     bool isVisible;
 } Player;
 
+typedef struct {
+    ShootTemplate *options[2];
+    float clickTimer;           
+    int selectedOption;         
+} LevelUpScreenState;
+
 void InitGame(GameData *gData);
 void UpdateGame(void);
 void DrawGame(void);
 void DrawUI(void);
+void DrawLevelUp(void);
 void UnloadGame(void);
 void CheckCollisions(void);
 void CheckPlayerEnemiesCollisions(void);
 void CheckProjectilesCollisions(void);
 void PlayerDamaged(int damage);
+void TriggerLevelUp(void);
 
 #endif

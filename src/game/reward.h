@@ -9,8 +9,8 @@
 #define MAX_REWARDS 150
 
 typedef enum RewardType {
-    REWARD_SCORE,       
-    REWARD_HEAL,        
+    REWARD_BASIC,       
+    REWARD_HP,       
     REWARD_SPEED,      
     REWARD_DAMAGE,      
     REWARD_COOLDOWN   
@@ -19,6 +19,7 @@ typedef enum RewardType {
 typedef struct {
     int score;
     int hp;
+    int maxHp;
     float damageBonus;
     float speedBonus;
     float cooldownBonus;

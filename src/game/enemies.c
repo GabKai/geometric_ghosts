@@ -12,7 +12,7 @@ static Enemy activeEnemies[MAX_ACTIVE_ENEMIES];
 static float spawnInterval = INITAL_SPAWN_INTERVAL;
 static float spawnTimer = INITAL_SPAWN_INTERVAL;
 static int spawnCount = 1;
-static const float difficultyIncreaseInterval = 5.0f;
+static const float difficultyIncreaseInterval = 6.5f;
 static float difficultyIncreaseTimer = 0.0f;
 
 void LoadEnemyTemplates(void) {
@@ -75,6 +75,10 @@ void LoadEnemyTemplates(void) {
     
     for (int i = 0; i < MAX_ACTIVE_ENEMIES; i++) activeEnemies[i].active = false;
     TraceLog(LOG_INFO, "Enemies: %d templates carregados com sucesso.", enemyTemplateCount);
+
+    spawnInterval = INITAL_SPAWN_INTERVAL;
+    spawnTimer = INITAL_SPAWN_INTERVAL;
+    spawnCount = 1;
 }
 
 void SpawnEnemy(Vector2 playerPos) {

@@ -1,5 +1,7 @@
 #include "reward.h"
 #include <math.h>
+#include <string.h>
+#include <stdio.h>
 
 static const float SCORE_SIZE = 7.0f;
 
@@ -28,9 +30,9 @@ void EnemyDeath(Vector2 position, int rarity) {
 
     int rng = GetRandomValue(0, 100);
     if (rng < 40) {
-        rewards[index].type = REWARD_SCORE;  
+        rewards[index].type = REWARD_BASIC;  
     } else if (rng < 55) {
-        rewards[index].type = REWARD_HEAL;     
+        rewards[index].type = REWARD_HP;     
     } else if (rng < 70) {
         rewards[index].type = REWARD_COOLDOWN; 
     } else if (rng < 85) {
@@ -55,19 +57,21 @@ RewardGain UpdateAndCheckRewardCollisions(Vector2 playerPos) {
             totalGain.score += baseScore;
 
             switch(rewards[i].type) {
-                case REWARD_SCORE:
+                case REWARD_BASIC:
+                    totalGain.hp += (rewards[i].rarity + 1);
                     break;
-                case REWARD_HEAL:
+                case REWARD_HP:
                     totalGain.hp += 5 * (rewards[i].rarity + 1);
+                    totalGain.maxHp += (rewards[i].rarity + 1);
                     break;
                 case REWARD_SPEED:
-                    totalGain.speedBonus += 15.0f * (rewards[i].rarity + 1);
+                    totalGain.speedBonus += 10.0f * (rewards[i].rarity + 1);
                     break;
                 case REWARD_DAMAGE:
-                    totalGain.damageBonus += 0.075f * (rewards[i].rarity + 1);
+                    totalGain.damageBonus += 0.1f * (rewards[i].rarity + 1);
                     break;
                 case REWARD_COOLDOWN:
-                    totalGain.cooldownBonus += 0.04f * (rewards[i].rarity + 1);
+                    totalGain.cooldownBonus += 0.05f * (rewards[i].rarity + 1);
                     break;
             }
             
@@ -85,8 +89,8 @@ void DrawRewards(void) {
         Color rewardColor = RAYWHITE;
 
         switch(rewards[i].type) {
-            case REWARD_SCORE:    rewardColor = RAYWHITE; break; 
-            case REWARD_HEAL:     rewardColor = GREEN;    break; 
+            case REWARD_BASIC:    rewardColor = RAYWHITE; break; 
+            case REWARD_HP:       rewardColor = GREEN;    break; 
             case REWARD_SPEED:    rewardColor = SKYBLUE;  break; 
             case REWARD_DAMAGE:   rewardColor = YELLOW;   break; 
             case REWARD_COOLDOWN: rewardColor = PINK;     break; 

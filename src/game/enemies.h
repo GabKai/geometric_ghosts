@@ -6,9 +6,9 @@
 
 #define MAX_ENEMY_TEMPLATES 16
 #define MAX_ACTIVE_ENEMIES 100
-#define INITAL_SPAWN_INTERVAL 5.0f
+#define INITAL_SPAWN_INTERVAL 6.0f
 #define SPAWN_INTERVAL_DECREASE 0.25f
-#define MIN_SPAWN_INTERVAL 1.5f
+#define MIN_SPAWN_INTERVAL 2.0f
 
 typedef struct {
     char name[32];

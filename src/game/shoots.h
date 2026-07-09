@@ -17,7 +17,9 @@ typedef enum {
 
 typedef struct {
     char name[32];
+    Texture2D texture;  
     MoveType moveType;
+    char text[100];
     float cooldown;
     int count;
     int damage;

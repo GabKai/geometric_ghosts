@@ -32,6 +32,7 @@ void LoadShootTemplates(void) {
         fscanf(file, "%s", typeStr);
         templates[templateCount].moveType = ParseMoveType(typeStr);
         
+        fscanf(file, " %127[^\n]", templates[templateCount].text);
         fscanf(file, "%f", &templates[templateCount].cooldown);
         fscanf(file, "%d", &templates[templateCount].count);
         fscanf(file, "%d", &templates[templateCount].damage);
@@ -44,6 +45,13 @@ void LoadShootTemplates(void) {
 
         //TraceLog(LOG_INFO, "SHOOT TEMPLATE: \n%s\n%s\n%d\n%d\n%d\n%f\n%s\n%f\n%f\n%f", templates[templateCount].name, typeStr, templates[templateCount].count, templates[templateCount].damage, templates[templateCount].duration, templates[templateCount].refSpeed, templates[templateCount].sound, templates[templateCount].aux1, templates[templateCount].aux2, templates[templateCount].aux3);
         
+        char fullPath[256];
+        snprintf(fullPath, sizeof(fullPath), "assets/icons/shoots/%s.png", templates[templateCount].name);
+
+        if (FileExists(fullPath)) {
+            templates[templateCount].texture = LoadTexture(fullPath);
+        }
+
         char endChar[2];
         fscanf(file, "%s", endChar);
 

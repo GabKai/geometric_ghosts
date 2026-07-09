@@ -45,6 +45,8 @@ int main(void)
             }
             UpdateGame();
             break;
+        case STATE_GAMEUP:
+            break;
         case STATE_GAMEOVER:
             if (gameInitialized){   
                 SaveToScoreboard();
@@ -71,6 +73,11 @@ int main(void)
                 DrawGame();
                 DrawUI();
             }
+            break;
+        case STATE_GAMEUP:
+            DrawGame();
+            DrawUI();
+            DrawLevelUp();
             break;
         case STATE_GAMEOVER:
             DrawGame();

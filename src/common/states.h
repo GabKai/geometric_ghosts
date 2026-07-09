@@ -4,6 +4,7 @@
 typedef enum GameState {
     STATE_MENU,
     STATE_GAME,
+    STATE_GAMEUP,
     STATE_GAMEOVER,
     STATE_OPTIONS,
 } GameState;

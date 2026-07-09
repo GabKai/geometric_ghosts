@@ -1,5 +1,6 @@
 simple
 linear
+Tiro simples em linha reta
 0.5
 1
 10
@@ -10,11 +11,25 @@ game/shoot/shoot.wav
 0.0
 0.0
 ;
+mine
+linear
+Plante bombas de alto dano
+0.8
+1
+10
+10.0
+0.0
+game/shoot/shoot.wav
+1.0
+0.0
+0.0
+;
 line
 linear
+Sequencia de tiros em linha reta
 1.0
 4
-10
+5
 10.0
 600.0
 game/shoot/shoot.wav
@@ -24,21 +39,23 @@ game/shoot/shoot.wav
 ;
 sqrcircle
 circle
+Tiros circulares ao redor da origem
 1.0
 4
 10
-10.0
+8.0
 0.0
 game/shoot/shoot.wav
-1.57
+3.14
 0.0
-15.0
+20.0
 ;
 dna
 sine
-1.5
+Tiros gemêos que fazem o movimento de seno e cosseno
+1.25
 2
-15
+20
 10.0
 600.0
 game/shoot/shoot.wav
@@ -48,13 +65,14 @@ game/shoot/shoot.wav
 ;
 shotgun
 splash
+Tiros espalhados para a direção
 1.5
 3
 20
 9.0
 500.0
 game/shoot/shoot.wav
-0.8
+0.4
 0.0
 0.0
 ;
